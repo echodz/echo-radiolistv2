@@ -47,3 +47,6 @@ Transform your server's radio experience today!** Echo Radio List brings profess
 
 ---
 *Compatible with PMA-VOICE | ESX-Legacy | QBCore | Optimized for performance*
+
+
+# Credits : https://github.com/XProject/x-radiolist
