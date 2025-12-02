@@ -21,7 +21,7 @@ Echo Radio List revolutionizes in-game radio communication by providing a sleek,
 
 # Professional Interface
 - Stunning visual design with animated radio lists
-- Drag & drop positioning for ultimate customization
+- Drag & drop positioning for ultimate customization using /radiolistdrag
 - Real-time talking indicators with dynamic visual feedback
 - Smooth animations and professional styling
 
@@ -37,11 +37,6 @@ Echo Radio List revolutionizes in-game radio communication by providing a sleek,
 - Channel-specific permissions and restrictions
 - Automatic member count tracking
 
-#  Premium Quality Assurance:
-- Professionally coded and optimized
-- Regular updates and improvements
-- Full compatibility with major frameworks
-- 5-star support and documentation
 
 Transform your server's radio experience today!** Echo Radio List brings professional-grade radio communication to your FiveM server with unmatched quality and performance.
 
