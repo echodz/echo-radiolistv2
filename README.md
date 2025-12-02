@@ -1,5 +1,7 @@
 ## Echo Radio List - Ultimate FiveM Radio Communication System
 
+# NOTE : Change name to echo-radiolist
+
 # Preview 
 
 <img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/0e624d7c-5cd8-4a7a-bdc7-767d183e15b5" />
