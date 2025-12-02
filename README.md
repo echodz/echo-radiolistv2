@@ -9,7 +9,7 @@
 
 # Additions :
 
-- /radiolisdrag : drag radio list and save it place after exiting / server restart
+- /radiolistdrag : drag radio list and save it place after exiting / server restart
 - added radio members count be side the radio header
 - a whole ui rework giving a new impressive look for pro servers
 
