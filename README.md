@@ -1,4 +1,4 @@
-## Echo Radio List - Ultimate FiveM Radio Communication System
+## Echo Radio List 
 
 # NOTE : Change name to echo-radiolist
 
