@@ -1,4 +1,4 @@
-## Echo Radio List 
+## Echo Radio List v2
 
 # NOTE : Change name to echo-radiolist
 
