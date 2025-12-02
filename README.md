@@ -1,52 +1,44 @@
-<h1 align="center"><b>X-RADIOLIST</b></h1>
-<h3 align="center">Radio List To Be Used With PMA-VOICE In FiveM</h3>
-<h4 align="center">Shows The List of Players In a Radio Frequency</h4>
-<br>
-<p align="center"><img src="https://forum.cfx.re/uploads/default/original/4X/a/4/5/a45b6ce284909392df9a7ad6c1bb736bb1637978.png"/></p>
+## Echo Radio List - Ultimate FiveM Radio Communication System
 
-## Features
-* Can be used as standalone
-* Config to show players’ RP name (needs framework integration - works with ESX-Legacy & QB-Core by default)
-* Changes the color of each player when they talk on radio
-* Ability to name radio channels in config (e.g. all frequencies between 0 and 1 called "Admin", between 1 and 2 called "Police" & etc)
-* Ability to toggle visibility of the list for self
-* Ability to customize self name on the radio list
-* Super easy to integrate other frameworks compatibility
-<hr>
+# Preview 
 
-### Changes in compare to <a href='https://github.com/mahanmoulaei/JLRP-RadioList'>JLRP-RadioList</a>
-* Performance increase
-* Bug fixes
-* Complete re-write of the code + more readability
-* Config to hide radio list visibility by default
-* Config to let players modify name of the radio channels
-* Config to show radio members server id next to their name on the list
-* Ability to use QB callsign metadata as name on radio while on duty
-* Ability to let players change/override the name of radio channels that are defined in Config.RadioChannelsWithName
-* Ability to let only players with certain groups/job/gang see the radio list
-* ~~Let admins see the members of each radio frequency~~ (<b>TODO...</b>)
-
-<hr>
-<br><h3 align='center'>Legal Notices</h3>
-<table><tr><td>
-Copyright (C) 2022-2023 Project-X (Mahan Moulaei)
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.  
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/0e624d7c-5cd8-4a7a-bdc7-767d183e15b5" />
 
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.  
 
 
-You should have received a copy of the GNU General Public License
-along with this program.  
-If not, see <https://www.gnu.org/licenses/>
-</td></tr>
-<tr><td>
-<p align="center"><a href='https://forum.cfx.re/t/free-list-of-players-in-radio-using-pma-voice/4838157'>FiveM Forum Post</a></p>
-</td></tr></table>
+**Transform your server's radio experience with the most advanced radio list system designed for FiveM servers using PMA-VOICE!**
+
+###  What Makes Echo Radio List Special?
+**Echo Radio List** revolutionizes in-game radio communication by providing a sleek, professional radio member display that enhances immersion and improves coordination between players.
+
+###  Key Features That Set Us Apart:
+
+** Professional Interface**
+- Stunning visual design with animated radio lists
+- Drag & drop positioning for ultimate customization
+- Real-time talking indicators with dynamic visual feedback
+- Smooth animations and professional styling
+
+** Advanced Player Management**
+- Customizable player names on radio channels
+- Real-time server ID display options
+- Framework integration (ESX-Legacy & QB-Core support)
+- Call sign integration for QBCore players on duty
+
+** Smart Radio Channel System**
+- Intelligent radio channel naming and customization
+- Support for multiple radio frequencies
+- Channel-specific permissions and restrictions
+- Automatic member count tracking
+
+###  Premium Quality Assurance:
+- Professionally coded and optimized
+- Regular updates and improvements
+- Full compatibility with major frameworks
+- 5-star support and documentation
+
+**Transform your server's radio experience today!** Echo Radio List brings professional-grade radio communication to your FiveM server with unmatched quality and performance.
+
+---
+*Compatible with PMA-VOICE | ESX-Legacy | QBCore | Optimized for performance*
