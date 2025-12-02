@@ -3,10 +3,10 @@ use_experimental_fxv2_oal   "yes"
 lua54       "yes"
 game        "gta5"
 
-name        "x-radiolist"
-version     "0.9.8"
-repository  "https://github.com/XProject/x-radiolist"
-description "Project-X Radio List : List of players in each radio channels to be used with PMA-VOICE"
+name        "echo-radiolist"
+version     "0.0.1"
+repository  "https://github.com/echodz/echo-radiolistv2"
+description "echo Radio List / x-radiolist : List of players in each radio channels to be used with PMA-VOICE"
 
 ui_page "web/index.html"
 
@@ -27,3 +27,4 @@ client_script {
     "module/**/client.lua",
     "client/*.lua"
 }
+
