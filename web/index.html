@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Echo Radio List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Rajdhani', sans-serif;
+            background: transparent;
+            color: #e0e0e0;
+            overflow: hidden;
+            font-size: 11px;
+        }
+
+        .radio-list-container {
+            position: absolute;
+            top: 12%;
+            right: 1%;
+            width: 120px;
+            border-radius: 6px;
+            overflow: hidden;
+            animation: appear 0.25s ease-out forwards;
+            cursor: default;
+            user-select: none;
+            z-index: 1000;
+        }
+
+        .radio-list-container.dragging {
+            cursor: grabbing;
+            opacity: 0.8;
+            transform: scale(1.05);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .radio-list-container.draggable {
+            cursor: move;
+        }
+        
+        #radio-list-header {
+            position: relative;
+            color: #dddddd;
+            font-size: 7px;
+            font-weight: 300;
+            padding: 4px 0;
+            text-align: center;
+            letter-spacing: 1px;
+            font-family: "Rajdhani", sans-serif;
+            transform: skewX(-8deg);
+            user-select: none;
+            text-transform: uppercase;
+        }
+
+        #radio-list-header::before,
+        #radio-list-header::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 34px;
+            height: 1px;
+            background: linear-gradient(
+                to right,
+                transparent,
+                #e9faff,
+                transparent
+            );
+        }
+
+        #radio-list-header::before { top: -2px; }
+        #radio-list-header::after  { bottom: -2px; }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .radio-entries {
+            padding: 4px;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+
+        .radio-entry {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background:radial-gradient(#ededed73,#ffffff28);
+            margin-bottom: 3px;
+            border-radius: 2px;
+            padding: 4px 6px;
+            font-size: 10px;
+            transform: skewX(-8deg);
+            transition: background 0.15s;
+            position: relative;
+            overflow: visible;
+        }
+
+        .radio-entry::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0.3) 0%,
+                rgba(255,255,255,0.4) 40%, 
+                rgba(255,255,255,0.6) 70%, 
+                rgba(255,255,255,0.85) 100%
+            );
+            clip-path: polygon(
+                0% 0%,
+                70% 0%,
+                100% 100%,
+                0% 100%
+            );
+        }
+
+        .radio-entry.you {
+            background:radial-gradient(#ededed40,#ffffff0a);
+        }
+
+        .radio-name {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 70px;
+            color: #e0e0e0;
+        }
+
+        .radio-tag {
+            background:radial-gradient(#ededed40,#ffffff0a);
+            padding: 1px 4px;
+            border-radius: 1px;
+            font-size: 9px;
+            color: #aaa;
+            font-weight: 600;
+        }
+
+        .you .radio-tag {
+            background: rgba(8, 132, 214, 0.25);
+            color: #0884D6;
+        }
+
+        .talking {
+            background: radial-gradient(#0884d64d,#0884d623) !important;
+        }
+
+        .talking .radio-name {
+            color: #ffffff;
+        }
+
+        .talking .radio-tag {
+            color: #0884D6;
+        }
+
+        .talking .radio-name::after {
+            content: '...';
+            margin-left: 4px;
+            animation: dots 1.4s infinite steps(4, end);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes dots {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes appear {
+            from { opacity: 0; transform: translateX(10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="radio-list-container" id="radio-list"></div>
+
+    <script>
+        const POSITION_STORAGE_KEY = 'radioListPosition';
+        
+        let isDragging = false;
+        let isDragModeEnabled = false;
+        let dragStartX, dragStartY;
+        let initialX, initialY;
+        let currentX = 0, currentY = 0;
+
+        let memberCount = 0;
+        let currentChannel = null;
+
+        function loadSavedPosition() {
+            const savedPosition = localStorage.getItem(POSITION_STORAGE_KEY);
+            if (savedPosition) {
+                try {
+                    const position = JSON.parse(savedPosition);
+                    currentX = position.x || 0;
+                    currentY = position.y || 0;
+                    applyPosition();
+                } catch (e) {
+                    console.warn('Failed to load saved radio list position:', e);
+                }
+            }
+        }
+
+        function savePosition() {
+            const position = { x: currentX, y: currentY };
+            localStorage.setItem(POSITION_STORAGE_KEY, JSON.stringify(position));
+        }
+
+        function applyPosition() {
+            const radioListElem = document.getElementById("radio-list");
+            if (radioListElem) {
+                radioListElem.style.left = currentX + 'px';
+                radioListElem.style.top = currentY + 'px';
+                radioListElem.style.right = 'auto';
+            }
+        }
+
+        function startDrag(e) {
+            if (!isDragModeEnabled) return;
+            
+            e.preventDefault();
+            const radioListElem = document.getElementById("radio-list");
+            
+            if (e.type === "touchstart") {
+                dragStartX = e.touches[0].clientX - currentX;
+                dragStartY = e.touches[0].clientY - currentY;
+            } else {
+                dragStartX = e.clientX - currentX;
+                dragStartY = e.clientY - currentY;
+            }
+            
+            isDragging = true;
+            radioListElem.classList.add('dragging');
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', stopDrag);
+            document.addEventListener('touchmove', drag, { passive: false });
+            document.addEventListener('touchend', stopDrag);
+        }
+
+        function drag(e) {
+            if (!isDragging || !isDragModeEnabled) return;
+            
+            e.preventDefault();
+            const radioListElem = document.getElementById("radio-list");
+            
+            if (e.type === "touchmove") {
+                currentX = e.touches[0].clientX - dragStartX;
+                currentY = e.touches[0].clientY - dragStartY;
+            } else {
+                currentX = e.clientX - dragStartX;
+                currentY = e.clientY - dragStartY;
+            }
+            
+            const rect = radioListElem.getBoundingClientRect();
+            const maxX = window.innerWidth - rect.width;
+            const maxY = window.innerHeight - rect.height;
+            
+            currentX = Math.max(0, Math.min(currentX, maxX));
+            currentY = Math.max(0, Math.min(currentY, maxY));
+            
+            applyPosition();
+        }
+
+        function stopDrag() {
+            if (!isDragging) return;
+            
+            isDragging = false;
+            const radioListElem = document.getElementById("radio-list");
+            if (radioListElem) {
+                radioListElem.classList.remove('dragging');
+            }
+            
+            document.removeEventListener('mousemove', drag);
+            document.removeEventListener('mouseup', stopDrag);
+            document.removeEventListener('touchmove', drag);
+            document.removeEventListener('touchend', stopDrag);
+            
+            savePosition();
+            
+            fetch(`https://echo-radiolist/savePosition`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+                body: JSON.stringify({ x: currentX, y: currentY })
+            }).catch(() => {});
+        }
+
+        function enableDragMode() {
+            const radioListElem = document.getElementById("radio-list");
+            if (!radioListElem) return;
+            
+            isDragModeEnabled = true;
+            isDragging = false;
+            radioListElem.classList.add('draggable');
+            
+            radioListElem.addEventListener('mousedown', startDrag);
+            radioListElem.addEventListener('touchstart', startDrag);
+            
+            document.addEventListener('keydown', handleKeyDown);
+            
+            fetch(`https://echo-radiolist/focusNUIB`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+                body: JSON.stringify({ focused: true })
+            });
+        }
+
+        function handleKeyDown(e) {
+            if (e.key === 'Escape' && isDragModeEnabled) {
+                disableDragMode();
+            }
+        }
+
+        function disableDragMode() {
+            const radioListElem = document.getElementById("radio-list");
+            if (!radioListElem) return;
+            
+            isDragModeEnabled = false;
+            isDragging = false;
+            radioListElem.classList.remove('draggable');
+            radioListElem.classList.remove('dragging');
+            
+            radioListElem.removeEventListener('mousedown', startDrag);
+            radioListElem.removeEventListener('touchstart', startDrag);
+            document.removeEventListener('keydown', handleKeyDown);
+            
+            document.removeEventListener('mousemove', drag);
+            document.removeEventListener('mouseup', stopDrag);
+            document.removeEventListener('touchmove', drag);
+            document.removeEventListener('touchend', stopDrag);
+            
+            fetch(`https://echo-radiolist/focusNUIB`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+                body: JSON.stringify({ focused: false })
+            });
+        }
+
+        function updateHeader(channel, count) {
+            const header = document.getElementById("radio-list-header");
+            if (header) {
+                const headerContent = header.querySelector(".header-content");
+                if (headerContent) {
+                    headerContent.textContent = "RADIO " + channel + " /// " + count ;
+                }
+            }
+        }
+
+        function updateMemberCount(count, channel) {
+            memberCount = count;
+            currentChannel = channel;
+            updateHeader(channel, count);
+        }
+
+        window.addEventListener('load', function() {
+            loadSavedPosition();
+        });
+
+        window.addEventListener("message", function(event) {
+            const item = event.data;
+            const radioListElem = document.getElementById("radio-list");
+
+            if (item.radioId != null) {
+                if (!radioListElem.querySelector("#radio-list-header")) {
+                    const header = document.createElement("div");
+                    header.id = "radio-list-header";
+                    
+                    const headerContent = document.createElement("div");
+                    headerContent.className = "header-content";
+                    headerContent.textContent = "RADIO " + item.channel + " • " + (item.memberCount || 1) + " MEM";
+                  
+                    
+                    header.appendChild(headerContent);
+                    
+                    radioListElem.appendChild(header);
+
+                    const entriesContainer = document.createElement("div");
+                    entriesContainer.className = "radio-entries";
+                    radioListElem.appendChild(entriesContainer);
+                    
+                    if (item.memberCount) {
+                        updateMemberCount(item.memberCount, item.channel);
+                    }
+                }
+
+                const entriesContainer = radioListElem.querySelector(".radio-entries");
+
+                if (item.radioName != null) {
+                    const listItem = document.createElement("div");
+                    listItem.id = "radio-list-item-" + item.radioId;
+                    listItem.className = "radio-entry" + (item.self ? " you" : "");
+
+                    listItem.innerHTML = `
+                        <span class="radio-name">${item.radioName}</span>
+                        <span class="radio-tag">${item.self ? 'YOU' : item.radioId}</span>
+                    `;
+
+                    entriesContainer.appendChild(listItem);
+                } else if (item.radioTalking != null) {
+                    const listItem = document.getElementById("radio-list-item-" + item.radioId);
+                    if (listItem) {
+                        listItem.classList.toggle("talking", item.radioTalking);
+                    }
+                } else {
+                    const listItem = document.getElementById("radio-list-item-" + item.radioId);
+                    if (listItem) {
+                        listItem.remove();
+                    }
+                }
+            }
+
+            if (item.memberCount && item.channel) {
+                updateMemberCount(item.memberCount, item.channel);
+            }
+
+            if (item.clearRadioList) {
+                radioListElem.innerHTML = "";
+            }
+
+            if (item.changeVisibility) {
+                radioListElem.style.display = item.visible ? 'block' : 'none';
+            }
+
+            if (item.enableDragMode) {
+                enableDragMode();
+            }
+
+            if (item.disableDragMode) {
+                disableDragMode();
+            }
+
+            if (item.loadPosition && item.loadPosition.x !== undefined && item.loadPosition.y !== undefined) {
+                currentX = item.loadPosition.x;
+                currentY = item.loadPosition.y;
+                applyPosition();
+            }
+
+            if (item.loadFromStorage) {
+                const savedPosition = localStorage.getItem(POSITION_STORAGE_KEY);
+                if (savedPosition) {
+                    try {
+                        const position = JSON.parse(savedPosition);
+                        SendNUIMessage({ savedPosition: position });
+                    } catch (e) {
+                        console.warn('Failed to parse saved position:', e);
+                    }
+                }
+            }
+
+            if (item.savedPosition && item.savedPosition.x !== undefined && item.savedPosition.y !== undefined) {
+                radioListPosition.x = item.savedPosition.x;
+                radioListPosition.y = item.savedPosition.y;
+                sendPositionToNUI();
+            }
+
+            if (item.currentName) {
+                const nameInput = document.getElementById("radio-name-input");
+                if (nameInput) {
+                    nameInput.value = item.currentName;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
