@@ -13,7 +13,7 @@
 
 
 # What Makes Echo Radio List Special?
-Echo Radio List** revolutionizes in-game radio communication by providing a sleek, professional radio member display that enhances immersion and improves coordination between players.
+Echo Radio List revolutionizes in-game radio communication by providing a sleek, professional radio member display that enhances immersion and improves coordination between players.
 
 ###  Key Features That Set Us Apart:
 
